@@ -53,8 +53,20 @@
                         <!-- Link per visualizzare maggiori informazioni sul progetto -->
                         <td><a href="{{ route("admin.projects.show", ["project" => $project->slug]) }}">{{ $project->title }}</a></td>
                         <td>{{ $project->description }}</td>
-                        <td>{{ $project->type->name }}</td>
-                        <td>{{ $project->type->field }}</td>
+                        <td>
+                            @if ($project->type)
+                                {{ $project->type->name }}
+                            @else
+                                <span class="text-muted">N/D</span>
+                            @endif
+                        </td>
+                        <td>
+                            @if ($project->type)
+                                {{ $project->type->field }}
+                            @else
+                                <span class="text-muted">N/D</span>
+                            @endif
+                        </td>
                         <td>
                             <!-- Pulsante per eliminare il progetto, apre il modale -->
                             <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="{{ $project->id }}">Elimina</button>
