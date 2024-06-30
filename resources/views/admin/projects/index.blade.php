@@ -1,4 +1,4 @@
-@extends('layouts.admin') 
+@extends('layouts.admin')
 
 @section('content')
     <div class="container">
@@ -6,7 +6,8 @@
         <div class="d-flex justify-content-between align-items-center">
             <h1 class="mt-2">Lista Progetti</h1>
             <span class="fs-4 add-btn d-flex align-items-center justify-content-center text-white me-5">
-                <a href="{{ route("admin.projects.create") }}"><i class="fa-solid fa-plus"></i></a>
+                <!-- Link per aggiungere un nuovo progetto -->
+                <a href="{{ route('admin.projects.create') }}"><i class="fa-solid fa-plus"></i></a>
             </span>
         </div>
         <!-- Descrizione e suggerimento per aggiungere progetti -->
@@ -16,26 +17,26 @@
         </div>
 
         <!-- Messaggi di sessione per le operazioni di eliminazione, caricamento e modifica -->
-        @if (session("messageDelete"))
+        @if (session('messageDelete'))
             <div class="alert alert-success">
-                {{ session("messageDelete") }}
+                {{ session('messageDelete') }}
             </div>
         @endif
 
-        @if (session("messageUpload"))
+        @if (session('messageUpload'))
             <div class="alert alert-primary">
-                {{ session("messageUpload") }}
+                {{ session('messageUpload') }}
             </div>
         @endif
 
-        @if (session("messageEdit"))
+        @if (session('messageEdit'))
             <div class="alert alert-primary">
-                {{ session("messageEdit") }}
+                {{ session('messageEdit') }}
             </div>
         @endif
 
         <!-- Tabella con la lista dei progetti -->
-        <table class="table table-striped table-hove ms-body">
+        <table class="table table-striped table-hover ms-body">
             <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -51,27 +52,35 @@
                     <tr>
                         <th scope="row">{{ $project->id }}</th>
                         <!-- Link per visualizzare maggiori informazioni sul progetto -->
-                        <td><a href="{{ route("admin.projects.show", ["project" => $project->slug]) }}">{{ $project->title }}</a></td>
+                        <td><a
+                                href="{{ route('admin.projects.show', ['project' => $project->slug]) }}">{{ $project->title }}</a>
+                        </td>
                         <td>{{ $project->description }}</td>
                         <td>
                             @if ($project->type)
                                 {{ $project->type->name }}
-                            @else
-                                <span class="text-muted">N/D</span>
-                            @endif
-                        </td>
-                        <td>
-                            @if ($project->type)
-                                {{ $project->type->field }}
-                            @else
-                                <span class="text-muted">N/D</span>
-                            @endif
-                        </td>
-                        <td>
-                            <!-- Pulsante per eliminare il progetto, apre il modale -->
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="{{ $project->id }}">Elimina</button>
-                        </td>
-                    </tr>
+                                @forelse ($project->technologies as $technology)
+                        <td>{{ $technology->name }}</td>
+                    @empty
+                        <td>Nessuna tecnologia indicata</td>
+                @endforelse
+            @else
+                <span class="text-muted">N/D</span>
+                @endif
+                </td>
+                <td>
+                    @if ($project->type)
+                        {{ $project->type->field }}
+                    @else
+                        <span class="text-muted">N/D</span>
+                    @endif
+                </td>
+                <td>
+                    <!-- Pulsante per eliminare il progetto, apre il modale -->
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                        data-id="{{ $project->id }}">Elimina</button>
+                </td>
+                </tr>
                 @endforeach
             </tbody>
         </table>
@@ -95,7 +104,7 @@
                     <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Chiudi</button>
                     <!-- Form per eliminare definitivamente il progetto -->
                     <form id="deleteForm" action="" method="POST">
-                        @method("DELETE")
+                        @method('DELETE')
                         @csrf
                         <button class="btn btn-danger">Elimina definitivamente</button>
                     </form>
@@ -106,9 +115,9 @@
 
     <!-- Script per gestire l'azione del modale di eliminazione -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             var deleteModal = document.getElementById('deleteModal');
-            deleteModal.addEventListener('show.bs.modal', function (event) {
+            deleteModal.addEventListener('show.bs.modal', function(event) {
                 var button = event.relatedTarget;
                 var projectId = button.getAttribute('data-id');
                 var form = deleteModal.querySelector('#deleteForm');

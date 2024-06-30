@@ -9,10 +9,8 @@ class Technology extends Model
 {
     use HasFactory;
 
-    // Definisco la relazione con il modello Project
-    public function projects()
-    {
-        // Una tecnologia appartiene a molti progetti
+    // Definisco la relazione molti-a-molti tra Technology e Project
+    public function projects() {
         return $this->belongsToMany(Project::class);
     }
 }

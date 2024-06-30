@@ -9,20 +9,16 @@ class Project extends Model
 {
     use HasFactory;
 
-    // Definisco i campi che possono essere riempiti in modo massivo
+    // Definisco i campi che possono essere assegnati in massa
     protected $fillable = ["title", "description", "slug", "type_id"];
-
-    // Definisco la relazione con il modello Type
-    public function type()
-    {
-        // Un progetto appartiene a un tipo
+    
+    // Definisco la relazione tra Project e Type (un progetto appartiene a un tipo)
+    public function type() {
         return $this->belongsTo(Type::class);
     }
 
-    // Definisco la relazione con il modello Technology
-    public function technologies()
-    {
-        // Un progetto ha molte tecnologie
+    // Definisco la relazione molti-a-molti tra Project e Technology
+    public function technologies() {
         return $this->belongsToMany(Technology::class);
     }
 }
