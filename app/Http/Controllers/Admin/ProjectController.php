@@ -44,6 +44,10 @@ class ProjectController extends Controller
         $newProject->slug = Str::slug($newProject->title);
 
         $newProject->save();
+    
+        if ($request->has("technologies")){
+            $newProject->technologies()->attach($request->technologies);
+        }
 
         return redirect()->route("admin.projects.index")->with("messageUpload", "Il progetto ". $newProject->title . " è stato aggiunto con successo!");;   
     }
