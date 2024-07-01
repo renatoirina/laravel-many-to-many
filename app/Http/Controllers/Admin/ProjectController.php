@@ -20,7 +20,7 @@ class ProjectController extends Controller
     {
         $perPage = $request->per_page ? $request->per_page : 10;
         $projects = Project::paginate($perPage)->appends(["per_page" => $perPage]);
-        return view("admin.projects.index" , compact("projects"));
+        return view("admin.projects.index", compact("projects"));
     }
 
     /**
@@ -42,14 +42,14 @@ class ProjectController extends Controller
         $newProject = new Project();
         $newProject->fill($data);
         $newProject->slug = Str::slug($newProject->title);
-
+        // dd($newProject->technologies());
         $newProject->save();
-    
-        if ($request->has("technologies")){
+
+        if ($request->has("technologies")) {
             $newProject->technologies()->attach($request->technologies);
         }
 
-        return redirect()->route("admin.projects.index")->with("messageUpload", "Il progetto ". $newProject->title . " è stato aggiunto con successo!");;   
+        return redirect()->route("admin.projects.index")->with("messageUpload", "Il progetto " . $newProject->title . " è stato aggiunto con successo!");;
     }
 
     /**
@@ -68,7 +68,9 @@ class ProjectController extends Controller
     {
         $project = Project::where("slug", $slug)->first();
         $types = Type::all();
-        return view("admin.projects.edit", compact("project", "types"));
+        $technologies = Technology::all();
+
+        return view("admin.projects.edit", compact("project", "types", "technologies"));
     }
 
     /**
@@ -77,14 +79,17 @@ class ProjectController extends Controller
     public function update(UpdateProjectRequest $request, Project $project)
     {
         $project = Project::where("slug", $project->slug)->first();
-        
+
         $data = $request->validated();
-        
+
         $project->slug = Str::slug($request->title);
         $project->update($data);
 
-        return redirect()->route("admin.projects.index")->with("messageEdit", "Il progetto ". $project->title . " è stato aggiornato con successo!");;
+        $project->technologies()->sync($request->technologies);
+        // dd($project);
 
+        // dd($project);
+        return redirect()->route("admin.projects.index")->with("messageEdit", "Il progetto " . $project->title . " è stato aggiornato con successo!");;
     }
 
     /**
@@ -94,11 +99,12 @@ class ProjectController extends Controller
     {
         $project = Project::findOrFail($id);
         $project->delete();
-        
-        return redirect()->route("admin.projects.index")->with("messageDelete", "Il progetto ". $project->title . " è stato eliminato con successo!");
+
+        return redirect()->route("admin.projects.index")->with("messageDelete", "Il progetto " . $project->title . " è stato eliminato con successo!");
     }
 
-    public function editselector (){
+    public function editselector()
+    {
         $projects = Project::all();
 
         return view("admin.projects.editselector", compact("projects"));

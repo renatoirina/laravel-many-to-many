@@ -17,14 +17,16 @@ class StoreProjectRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string>
      */
     public function rules(): array
     {
         return [
             "title" => "required|max:30|unique:projects",
             "description" => "max:300",
-            "type_id"=>"required|exists:types,id"
+            "type_id"=>"required|exists:types,id",
+            "technologies"=>"nullable|exists:technologies,id",
+
         ];
     }
 
@@ -36,7 +38,8 @@ class StoreProjectRequest extends FormRequest
             "title.unique" => "Il titolo è già in utilizzo, cambia titolo!",
             "description.max" => "La lunghezza massima della descrizione è di 300 caratteri!",
             "type_id.required" => "Il linguaggio è necessario per aggiungere un nuovo progetto!",
-            "type_id.exists" => "Questo linguaggio non esiste."
+            "type_id.exists" => "Questo linguaggio non esiste.",
+            "technologies.exists"=>"Questa tecnologia non è valida.",
         ];
     }
 }

@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container">
-        <!-- Intestazione della pagina con titolo e pulsante per aggiungere nuovi progetti -->
+        <!-- Intestazione della pagina e pulsante per aggiungere un nuovo progetto -->
         <div class="d-flex justify-content-between align-items-center">
             <h1 class="mt-2">Lista Progetti</h1>
             <span class="fs-4 add-btn d-flex align-items-center justify-content-center text-white me-5">
@@ -11,13 +11,12 @@
                 </a>
             </span>
         </div>
-        <!-- Descrizione e suggerimento per aggiungere progetti -->
         <div class="d-flex justify-content-between align-items-center">
             <p>Clicca il nome per avere maggiori informazioni</p>
             <p class="me-1">Aggiungi progetto</p>
         </div>
 
-        <!-- Messaggi di sessione per le operazioni di eliminazione, caricamento e modifica -->
+        <!-- Messaggi di sessione per feedback all'utente -->
         @if (session('messageDelete'))
             <div class="alert alert-success">
                 {{ session('messageDelete') }}
@@ -48,8 +47,8 @@
             <button type="submit">Applica</button>
         </form>
 
-        <!-- Tabella con la lista dei progetti -->
-        <table class="table table-striped table-hove ms-body">
+        <!-- Tabella che mostra l'elenco dei progetti -->
+        <table class="table table-striped table-hover ms-body">
             <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -57,7 +56,7 @@
                     <th scope="col">Descrizione</th>
                     <th scope="col">Linguaggio</th>
                     <th scope="col">Campo</th>
-                    <th scope="col">Technology</th>
+                    <th scope="col">Tecnologia</th>
                 </tr>
             </thead>
             <tbody>
@@ -65,8 +64,9 @@
                     <tr>
                         <th scope="row">{{ $project->id }}</th>
                         <td>
-                            <a
-                                href="{{ route('admin.projects.show', ['project' => $project->slug]) }}">{{ $project->title }}</a>
+                            <a href="{{ route('admin.projects.show', ['project' => $project->slug]) }}">
+                                {{ $project->title }}
+                            </a>
                         </td>
                         <td>{{ $project->description }}</td>
                         <td>{{ $project->type?->name }}</td>
@@ -78,10 +78,10 @@
                                 Nessuna tecnologia indicata
                             @endforelse
                         </td>
-                        <!-- Pulsante per eliminare il progetto, apre il modale -->
                         <td>
-                            <button type="submit" class="btn btn-danger" data-bs-toggle="modal"
-                                data-bs-target="#deleteModal" data-id="{{ $project->id }}">Elimina</button>
+                            <!-- Pulsante per aprire il modale di eliminazione -->
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                data-bs-target="#deleteModal" data-project-id="{{ $project->id }}">Elimina</button>
                         </td>
                     </tr>
                 @endforeach
@@ -93,23 +93,23 @@
             {{ $projects->links() }}
         </div>
 
-        <!-- Modale Eliminazione -->
-        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModal" aria-hidden="true">
+        <!-- Modale di conferma eliminazione -->
+        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
-                    <!-- HEADER del modale di eliminazione -->
+                    <!-- Header del modale -->
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Conferma eliminazione</h1>
+                        <h1 class="modal-title fs-5" id="deleteModalLabel">Conferma eliminazione</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <!-- BODY del modale di eliminazione -->
+                    <!-- Body del modale -->
                     <div class="modal-body">
                         <span>Vuoi davvero eliminare l'elemento definitivamente?</span>
                     </div>
-                    <!-- FOOTER del modale di eliminazione -->
+                    <!-- Footer del modale -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Chiudi</button>
-                        <!-- Form per eliminare definitivamente il progetto -->
+                        <!-- Form per l'eliminazione definitiva del progetto -->
                         <form id="deleteForm" action="" method="POST">
                             @method('DELETE')
                             @csrf
@@ -119,18 +119,18 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Script per gestire l'azione del modale di eliminazione -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var deleteModal = document.getElementById('deleteModal');
-            deleteModal.addEventListener('show.bs.modal', function(event) {
-                var button = event.relatedTarget;
-                var projectId = button.getAttribute('data-id');
-                var form = deleteModal.querySelector('#deleteForm');
-                form.action = '/admin/projects/' + projectId;
+        <script>
+            // JavaScript per impostare l'azione del form di eliminazione con l'id del progetto corretto
+            document.addEventListener('DOMContentLoaded', function() {
+                var deleteModal = document.getElementById('deleteModal');
+                deleteModal.addEventListener('show.bs.modal', function(event) {
+                    var button = event.relatedTarget;
+                    var projectId = button.getAttribute('data-project-id');
+                    var deleteForm = deleteModal.querySelector('#deleteForm');
+                    deleteForm.setAttribute('action', `/admin/projects/${projectId}`);
+                });
             });
-        });
-    </script>
+        </script>
+    </div>
 @endsection
