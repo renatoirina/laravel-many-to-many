@@ -42,7 +42,6 @@ class ProjectController extends Controller
         $newProject = new Project();
         $newProject->fill($data);
         $newProject->slug = Str::slug($newProject->title);
-        // dd($newProject);
 
         $newProject->save();
 
@@ -79,9 +78,7 @@ class ProjectController extends Controller
         
         $project->slug = Str::slug($request->title);
         $project->update($data);
-        // dd($project);
-        
-        // dd($project);
+
         return redirect()->route("admin.projects.index")->with("messageEdit", "Il progetto ". $project->title . " è stato aggiornato con successo!");;
 
     }
